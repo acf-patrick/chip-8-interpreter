@@ -1,4 +1,5 @@
 #include "chip8.h"
+#include <iostream>
 
 int main(int argc, char** argv)
 {
@@ -8,7 +9,7 @@ int main(int argc, char** argv)
         std::cerr << "ex : -$ chip-8 tetris" std::endl;
         return 1;
     }
-    
+
     Chip_8(argv[1]).run();
     return 0;
 }
