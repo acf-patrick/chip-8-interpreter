@@ -6,12 +6,13 @@ void CPU::o00E0()
     for (int i=0; i<64; ++i)
         for (int j=0; j<32; ++j)
             display[i][j] = 0;
+
+    draw = true;
 }
 
 void CPU::o00EE()
 {
-    sp--;
-    pc = stack[sp];
+    pc = stack[--sp];
 }
 
 void CPU::o1NNN()
@@ -55,14 +56,14 @@ void CPU::o6XKK()
 {
     int x = (opcode & 0xf00) >> 8,
         kk = opcode & 0xff;
-    registers[x] = registers[kk];
+    registers[x] = kk;
 }
 
 void CPU::o7XKK()
 {
     int x = (opcode & 0xf00) >> 8,
         kk = opcode & 0xff;
-    registers[x] += registers[kk];
+    registers[x] += kk;
 }
 
 void CPU::o8XY0()
@@ -133,7 +134,7 @@ void CPU::o8XYE()
 {
     int x = (opcode & 0xf00) >> 8;
 
-    registers[0xf] = registers[x] & 0xf0 >> 7;
+    registers[0xf] = registers[x] & 0x80 >> 7;
     registers[x] <<=2;
 }
 
@@ -162,7 +163,7 @@ void CPU::oCXKK()
     int x = (opcode & 0xf00) >> 8,
         kk = opcode & 0xff;
     
-    registers[x] = (rand()%0xff) & kk;
+    registers[x] = (rand()%0x1000) & kk;
 }
 
 void CPU::oDXYN()
@@ -181,6 +182,8 @@ void CPU::oDXYN()
         registers[y] % 32
     };
 
+    registers[0xf] = 0;
+
     for (int i=0; i < height; ++i)
     {
         Byte sprite = memory[index + i];
@@ -189,28 +192,30 @@ void CPU::oDXYN()
             Byte pixel = sprite & (0x80 >> j);
             if (pixel)
             {
-                Byte& screenpx = display[x+j][y+i];
-                if (screenpx == 0xff)
+                Byte& screenpx = display[pos[0]+j][pos[1]+i];
+                if (screenpx == 1)
                     registers[0xf] = 1;
-                screenpx ^= 0xff;
+                screenpx ^= 1;
             }
         }
     }
+
+    draw = true;
 }
 
 void CPU::oEX9E()
 {
-    int x = (opcode & 0xf00) >> 8;
+    int i = registers[(opcode & 0xf00) >> 8];
 
-    if (keys[x])
+    if (keys[i])
         pc += 2;
 }
 
 void CPU::oEXA1()
 {
-    int x = (opcode & 0xf00) >> 8;
+    int i = registers[(opcode & 0xf00) >> 8];
 
-    if (!keys[x])
+    if (!keys[i])
         pc += 2;
 }
 
@@ -227,13 +232,11 @@ void CPU::oFX0A()
 
     int i;
     for (i=0; i < 0x10; ++i)
-    {
         if (keys[i])
         {
             registers[x] = i;
             break;
         }
-    }
 
     if (i == 0x10)
         pc -= 2;
@@ -256,7 +259,8 @@ void CPU::oFX1E()
 
 void CPU::oFX29()
 {
-    index = memory[font_start + 5*registers[(opcode & 0xf00) >> 8]];
+    Byte addr = registers[(opcode & 0xf00) >> 8];
+    index = font_start + 5*addr;
 }
 
 void CPU::oFX33()

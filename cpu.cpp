@@ -5,7 +5,8 @@ CPU* CPU::instance = nullptr;
 CPU* CPU::get() 
 { return instance; }
 
-CPU::CPU()
+CPU::CPU(bool& d):
+    draw(d)
 { 
     instance = this; 
     load_font();

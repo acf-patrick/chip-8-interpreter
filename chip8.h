@@ -20,6 +20,7 @@ private:
     void handle_event();
 
     bool running;
+    bool draw;
 
     CPU cpu;
     Renderer renderer;

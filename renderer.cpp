@@ -25,6 +25,7 @@ Renderer::~Renderer()
 {
     SDL_DestroyWindow(_window);
     SDL_DestroyRenderer(_renderer);
+    SDL_Quit();
 }
 
 void Renderer::draw()
@@ -43,7 +44,8 @@ void Renderer::draw()
                 j*_pxSize, i*_pxSize,
                 _pxSize, _pxSize
             };
-            SDL_RenderFillRect(_renderer, &rect);
+            if (display[j][i])
+                SDL_RenderFillRect(_renderer, &rect);
         }
 
     SDL_RenderPresent(_renderer);

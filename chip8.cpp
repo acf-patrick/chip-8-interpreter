@@ -4,7 +4,8 @@
 #include <ctime>
 
 Chip_8::Chip_8(const std::string& rom) :
-    renderer(10), running(true)
+    running(true), draw(false),
+    cpu(draw), renderer(10)
 {
     load_rom (rom);
 
@@ -30,7 +31,12 @@ void Chip_8::run()
 
         handle_event();
         cpu.process();
-        renderer.draw();
+        
+        if (draw)
+        {
+            draw = false;
+            renderer.draw();
+        }
 
         tick = timer.get();
         if (tick < rate)
@@ -49,8 +55,9 @@ void Chip_8::load_rom(const std::string& rom)
         exit(1);
     }
 
-    fread(&cpu.memory[cpu.mem_start], 0x800, 1, file);
+    fread(&cpu.memory[cpu.mem_start], 0xdff, 1, file);
     fclose(file);
+
 }
 
 void Chip_8::handle_event()
@@ -65,7 +72,10 @@ void Chip_8::handle_event()
             if (scancode == SDL_SCANCODE_ESCAPE)
                 running = false;
             else if (bind.find(scancode) != bind.end())
+            {
+                std::cout << std::hex << bind[scancode] << std::endl;
                 cpu.keys[bind[scancode]] = 1;
+            }
         }
         else if (event.type == SDL_KEYUP)
         {

@@ -18,23 +18,24 @@ public:
 
 private:
 
-    CPU();
+    CPU(bool&);
     ~CPU();
 
-    Byte memory[0x1000];    // 4kb
-    Byte registers[0xf];    // V0... VF
+    Byte memory[0x1000] = { 0x0 };  // 4kb
+    Byte registers[0xf] = { 0x0 };  // V0... VF
 
-    Word index;             // Special register
-    Word pc;                // program counter
+    Word index = 0;                 // Special register
+    Word pc = 0x200;                // program counter
 
-    Word stack[0x10];
-    Byte sp;                // stack pointer
+    Word stack[0x10] = { 0x0 };
+    Byte sp = 0;                    // stack pointer
 
-    int keys[0x10];
+    int keys[0x10] = {0};
 
-    Byte display[64][32];
+    bool& draw;
+    Byte display[64][32] = { {0x0} };
 
-    Word opcode;
+    Word opcode = 0x0;
     std::map<int, std::function<void(void)>> opcodes;
 
 // Timers
