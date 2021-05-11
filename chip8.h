@@ -27,8 +27,8 @@ private:
 
     SDL_Event event;
 
-    std::map<SDL_Scancode, int> bind;
-    std::map<SDL_Scancode, bool> keys;
+    std::map<SDL_Keycode, int> bind;
+    std::map<SDL_Keycode, bool> keys;
     
     const int FPS = 60;
 };

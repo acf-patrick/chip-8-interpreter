@@ -109,8 +109,8 @@ void CPU::o8XY5()
     int x = (opcode & 0xf00) >> 8,
         y = (opcode & 0xf0)  >> 4;
 
-    registers[0xf] = registers[x] >= registers[y];
-    registers[x] = registers[x] - registers[y];
+    registers[0xf] = registers[x] > registers[y];
+    registers[x] -= registers[y];
 }
 
 void CPU::o8XY6()
@@ -126,7 +126,7 @@ void CPU::o8XY7()
     int x = (opcode & 0xf00) >> 8,
         y = (opcode & 0xf0)  >> 4;
 
-    registers[0xf] = registers[x] <= registers[y];
+    registers[0xf] = registers[x] < registers[y];
     registers[x] = registers[y] - registers[x];
 }
 
@@ -134,8 +134,8 @@ void CPU::o8XYE()
 {
     int x = (opcode & 0xf00) >> 8;
 
-    registers[0xf] = registers[x] & 0x80 >> 7;
-    registers[x] <<=2;
+    registers[0xf] = (registers[x] & 0x80) >> 7;
+    registers[x] <<= 1;
 }
 
 void CPU::o9XY0()
@@ -178,8 +178,8 @@ void CPU::oDXYN()
         width = height = 16;
 
     Byte pos[2] = {
-        registers[x] % 64,
-        registers[y] % 32
+        Byte(registers[x] % 64),
+        Byte(registers[y] % 32)
     };
 
     registers[0xf] = 0;
@@ -193,7 +193,7 @@ void CPU::oDXYN()
             if (pixel)
             {
                 Byte& screenpx = display[pos[0]+j][pos[1]+i];
-                if (screenpx == 1)
+                if (screenpx)
                     registers[0xf] = 1;
                 screenpx ^= 1;
             }

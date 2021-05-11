@@ -10,10 +10,10 @@ Chip_8::Chip_8(const std::string& rom) :
     load_rom (rom);
 
     bind = {
-        { SDL_SCANCODE_1, 0x1 }, { SDL_SCANCODE_2, 0x2 }, { SDL_SCANCODE_3, 0x3 }, { SDL_SCANCODE_4, 0xc },
-        { SDL_SCANCODE_A, 0x4 }, { SDL_SCANCODE_Z, 0x5 }, { SDL_SCANCODE_E, 0x6 }, { SDL_SCANCODE_R, 0xd },
-        { SDL_SCANCODE_Q, 0x7 }, { SDL_SCANCODE_S, 0x8 }, { SDL_SCANCODE_D, 0x9 }, { SDL_SCANCODE_F, 0xe },
-        { SDL_SCANCODE_W, 0xa }, { SDL_SCANCODE_X, 0x0 }, { SDL_SCANCODE_C, 0xb }, { SDL_SCANCODE_V, 0xf }
+        { SDLK_1, 0x1 }, { SDLK_2, 0x2 }, { SDLK_3, 0x3 }, { SDLK_4, 0xc },
+        { SDLK_a, 0x4 }, { SDLK_z, 0x5 }, { SDLK_e, 0x6 }, { SDLK_r, 0xd },
+        { SDLK_q, 0x7 }, { SDLK_s, 0x8 }, { SDLK_d, 0x9 }, { SDLK_f, 0xe },
+        { SDLK_w, 0xa }, { SDLK_x, 0x0 }, { SDLK_c, 0xb }, { SDLK_v, 0xf }
     };
 
     srand(time(0));
@@ -68,18 +68,15 @@ void Chip_8::handle_event()
             running = false;
         else if (event.type == SDL_KEYDOWN)
         {
-            SDL_Scancode scancode = event.key.keysym.scancode;
-            if (scancode == SDL_SCANCODE_ESCAPE)
+            SDL_Keycode scancode = event.key.keysym.sym;
+            if (scancode == SDLK_ESCAPE)
                 running = false;
             else if (bind.find(scancode) != bind.end())
-            {
-                std::cout << std::hex << bind[scancode] << std::endl;
                 cpu.keys[bind[scancode]] = 1;
-            }
         }
         else if (event.type == SDL_KEYUP)
         {
-            SDL_Scancode scancode = event.key.keysym.scancode;
+            SDL_Keycode scancode = event.key.keysym.sym;
             if (bind.find(scancode) != bind.end())
                 cpu.keys[bind[scancode]] = 0;
         }

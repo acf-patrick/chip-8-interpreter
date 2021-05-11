@@ -1,4 +1,5 @@
 #include "cpu.h"
+#include <iostream>
 
 CPU* CPU::instance = nullptr;
 
@@ -170,6 +171,9 @@ void CPU::match_opcodes()
 
 void CPU::process()
 {
+    std::cout << "PC     : " << std::hex << pc << std::endl;
+    std::cout << "Opcode : " << std::hex << opcode << std::endl;
+
     opcode = (memory[pc] << 8) | memory[pc+1];
     pc += 2;
 
